@@ -1,10 +1,9 @@
 var sys = require("sys"),
     http = require("http");
 
-sys.puts(process.ARGV);
 var file = process.ARGV[3];
 var hostname = (process.ARGV[4]) ? process.ARGV[4] : "localhost";
-var port = (process.ARGV[5]) ? process.ARGV[5] : 8000;
+var port = (process.ARGV[5]) ? parseInt(process.ARGV[5]) : 8000;
 var log_server = http.createClient(port, hostname);
 sys.puts("sending logs to " + hostname + ":" + port);
 
@@ -20,12 +19,6 @@ var monitor_file = function(filename) {
     cmd.addListener("output", function(data) {
 	    sys.puts("output: sending (" + data.length + ")");
 	    send_log(data);
-	});
-    cmd.addListener("error", function(data) {
-	    sys.puts("error: " + data);
-	});
-    cmd.addListener("exit", function(data) {
-	    sys.puts("exit: " + data);
 	});
 };
 

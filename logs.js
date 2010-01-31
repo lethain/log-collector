@@ -1,21 +1,22 @@
 var sys = require("sys"),
     http = require("http");
 
+var backend = (process.ARGV[3]) ? process.ARGV[3] : "./log_file_backend.js";
+var record_message = require(backend).record_message;
+
+var record_message = function(request, msg) {
+    sys.puts("received: " + msg);
+};
+
 http.createServer(function (request, response) {
-	sys.puts("received...");
 	var content = "";
 	request.addListener("body", function(chunk) {
-		sys.puts("data...");
 		content += chunk;
 	    });
 	request.addListener("complete", function() {
-		sys.puts("received: " + content);
+		record_message(request, content);
 		response.sendHeader(200, {"Content-Type": "text/plain"});
-		response.sendBody("received message of length " + content.length);
-		response.finish();		
+		response.sendBody("stored message (" + content.length ")");
+		response.finish();
 	    });
-
-	sys.puts(request);
-
     }).listen(8000);
-sys.puts("Server running at http://127.0.0.1:8000/");
